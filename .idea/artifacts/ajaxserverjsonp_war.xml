@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ajaxserverjsonp:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="ajaxserverjsonp.war">
+      <element id="artifact" artifact-name="ajaxserverjsonp:war exploded" />
+    </root>
+  </artifact>
+</component>
