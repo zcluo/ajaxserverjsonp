@@ -1,7 +1,21 @@
 package com.ccb.zcluo.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONCreator;
 import com.ccb.zcluo.service.IUserService;
+import com.fasterxml.jackson.databind.jsonFormatVisitors.JsonObjectFormatVisitor;
+import org.apache.http.client.fluent.Request;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.codehaus.jackson.JsonEncoding;
+import org.codehaus.jackson.JsonFactory;
+import org.codehaus.jackson.JsonGenerator;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.util.JSONWrappedObject;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -55,6 +70,50 @@ public class UserController {
     @RequestMapping("/hello")
     public String hello(){
         return "hello";
+    }
+
+
+    @ResponseBody
+    @RequestMapping(value = "/re")
+    public ModelAndView re() {
+        String uri = "https://api.vultr.com/v1/os/list";
+        HttpGet httpGet = new HttpGet(uri);
+        String resp = new String();
+        ObjectMapper objMapper = new ObjectMapper();
+        String ret = "";
+        try {
+            //String resp = Request.Get(uri).connectTimeout(100).socketTimeout(100).execute().returnContent().asString();
+            resp = Request.Get(uri).execute().returnContent().asString();
+            System.out.println(resp);
+
+            Map jsonObject = JSONObject.parseObject(resp);
+            //ret = jsonObject.toJSONString();
+            for (Object key:jsonObject.keySet()
+                 ) {
+                System.out.println("key is " + key + "; value is "+jsonObject.get(key));
+                
+            }
+            System.out.println(ret);
+            ModelAndView mv = new ModelAndView();
+            mv.addObject("sysinfo",jsonObject);
+
+            mv.setViewName("re");
+
+            return mv;
+
+
+
+
+
+            //return new JSONPObject("callbackfunc",resp);
+
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+
+        return null;
     }
 
     //match automatically
